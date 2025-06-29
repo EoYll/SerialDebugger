@@ -50,7 +50,7 @@ private:
         {"标志校验",QSerialPort::MarkParity}
 
     };
-    QMap<QString, SerialDebugger::DataMode>dataMode = {};
+   
     QList<QVariant>parameter;
     QList<QVariant>parameter2;
 
