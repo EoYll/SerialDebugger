@@ -12,10 +12,7 @@ class SerialDebugger : public QMainWindow
     Q_OBJECT
 
 public:
-    enum DataMode
-    {
-        ASCII,HEX,AutoSend,
-    };
+   
     SerialDebugger(QWidget *parent = nullptr);
     ~SerialDebugger();
 
