@@ -1,5 +1,5 @@
 #pragma once
-#include "E:\Qt\Qt6.8.0\6.8.0\msvc2022_64\include\QtCore\qobject.h"
+#include "qobject.h"
 #include<qserialport.h>
 #include<qserialportinfo.h>
 class SerialManager :
