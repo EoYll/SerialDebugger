@@ -1,10 +1,11 @@
 #include "SerialManager.h"
 #include<qdebug.h>
 #include<qvariant.h>
-Q_DECLARE_METATYPE(QSerialPort::Parity);
+
+
 SerialManager::SerialManager(QObject* parent)
 {
-
+	buffer=new SerialRingBuffer(2048);
 	
 }
 
@@ -121,9 +122,23 @@ bool SerialManager::isOpen() const
 
 void SerialManager::handleReadyRead()
 {
-	QByteArray data = serialPort2->readAll();
-	qDebug() << "原始数据：" << data;
-	emit  dataReceived(data);
+	while (serialPort2->bytesAvailable() > 0) {
+		QByteArray data = serialPort2->readAll();
+		qDebug() << "读取了发来的数据";
+		buffer->write(data.constData(), data.size());
+		//qDebug() << "原始数据：" << data;
+		//emit  dataReceived(data);
+	}
 
+}
+
+void SerialManager::dataReceivedToUi()
+{
+	
+	if (buffer->dataSize() > 0) {
+		qDebug() << "读取了缓冲区的数据";
+		QByteArray data = buffer->read(100);
+		emit dataReceived(data);
+	}
 }
 

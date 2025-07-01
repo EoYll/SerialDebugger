@@ -98,6 +98,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SerialManager.cpp" />
+    <ClCompile Include="SerialRingBuffer.cpp" />
     <QtRcc Include="SerialDebugger.qrc" />
     <QtUic Include="SerialDebugger.ui" />
     <QtMoc Include="SerialDebugger.h" />
@@ -109,6 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SerialRingBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

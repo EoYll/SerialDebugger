@@ -1,9 +1,11 @@
 #include "SerialDebugger.h"
-
+#include<qdatetime.h>
+#include<qthread.h>
 SerialDebugger::SerialDebugger(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
+   
     connect(ui.btnRefresh, &QPushButton::clicked, this, [this]() {
         refreshPorts("Btn1");
         
@@ -21,9 +23,12 @@ SerialDebugger::SerialDebugger(QWidget *parent)
         });
     connect(ui.btnSend, &QPushButton::clicked, this, &SerialDebugger::sendData);
     connect(&serialManager, &SerialManager::dataReceived, this, &SerialDebugger::handleReceivedData);
-
+   
     connect(ui.btnClearReceive, &QPushButton::clicked, this, &SerialDebugger::clearReceiveData);
     connect(ui.btnClearSend, &QPushButton::clicked, this, &SerialDebugger::clearSendData);
+
+    connect(&readDataTimer, &QTimer::timeout, &serialManager, &SerialManager::dataReceivedToUi);
+    readDataTimer.start(50);
     initBaudRate();
     initDataBits();
     initParityBit();
@@ -31,6 +36,11 @@ SerialDebugger::SerialDebugger(QWidget *parent)
     ui.cmbDataMode->addItems({ "ASCII","HEX","AutoSend" });
     isConnected = false;
     isConnected2 = false;
+
+    /*workerThread = new QThread;
+    serialManager.moveToThread(workerThread);*/
+
+
 }
 
 SerialDebugger::~SerialDebugger()
@@ -124,12 +134,20 @@ void SerialDebugger::handleReceivedData(QByteArray& data)
 
 
     }
+    saveReceivedData(text);
     ui.textReceive->append(text);
 }
 
-void SerialDebugger::saveReceivedData()
+void SerialDebugger::saveReceivedData(QString&text)
 {
-
+    QFile dataFile("serial_data.txt");
+    if (!dataFile.open(QIODevice::ReadOnly | QIODevice::Append | QIODevice::Text)) {
+        qCritical() << "无法创建文件" << dataFile.errorString();
+    }
+    QTextStream outStream(&dataFile);
+    outStream.setEncoding(QStringConverter::Utf8);
+    outStream <<"[" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") << "] " << text << "\r\n";
+    outStream.flush();
 }
 
 void SerialDebugger::loadSendHistory()
